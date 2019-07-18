@@ -1,6 +1,6 @@
 # catalan2ipa
 
-[![dependencies Status](https://david-dm.org/Connum/npm-catalan2ipa/status.svg)](https://david-dm.org/Connum/npm-catalan2ipa) [![devDependencies Status](https://david-dm.org/Connum/npm-catalan2ipa/dev-status.svg)](https://david-dm.org/Connum/npm-catalan2ipa?type=dev) [![License: MIT](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://opensource.org/licenses/LGPL-3.0)  [![npm total downloads](https://img.shields.io/npm/dt/catalan2ipa.svg)](https://www.npmjs.com/package/catalan2ipa)
+[![dependencies Status](https://david-dm.org/Connum/catalan2ipa/status.svg)](https://david-dm.org/Connum/catalan2ipa) [![devDependencies Status](https://david-dm.org/Connum/catalan2ipa/dev-status.svg)](https://david-dm.org/Connum/catalan2ipa?type=dev) [![License: MIT](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://opensource.org/licenses/LGPL-3.0)  [![npm total downloads](https://img.shields.io/npm/dt/catalan2ipa.svg)](https://www.npmjs.com/package/catalan2ipa)
 
 Converts single-worded input strings of Catalan words to IPA (International Phonetic Alphabet) notation. The result is an object holding three dialectal varieties in its keys: `ca` - Cental Catalan (Català oriental central); `ca-valencia` - Valencian (Valencià); `ca-XB` - Balearic (Balear);
 
@@ -9,7 +9,7 @@ This is basically a port of the **Wiktionary module** [{{ca-IPA}}](https://en.wi
 ## Installation
 `npm install catalan2ipa`
 
-or use the files in `/dist` or from the [releases](https://github.com/Connum/npm-catalan2ipa/releases) for direct in-browser usage.
+or use the files in `/dist` or from the [releases](https://github.com/Connum/catalan2ipa/releases) for direct in-browser usage.
 
 ## Usage and examples
 ```js
