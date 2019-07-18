@@ -1,6 +1,6 @@
 {
   "name": "catalan2ipa",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Converts Catalan words to IPA (international phonetic alphabet) notation, with variants for Cental Catalan (Català oriental central), Valencian (Valencià) and Balearic (Balear).",
   "main": "./lib/index.js",
   "scripts": {
