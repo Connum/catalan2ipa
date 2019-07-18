@@ -1,0 +1,72 @@
+{
+  "name": "catalan2ipa",
+  "version": "1.0.0",
+  "description": "Converts Catalan words to IPA (international phonetic alphabet) notation, with variants for Cental Catalan (Català oriental central), Valencian (Valencià) and Balearic (Balear).",
+  "main": "./lib/index.js",
+  "scripts": {
+    "clean": "rimraf lib && rimraf build/temp",
+    "test": "npm run lint && npm run test:only",
+    "test:only": "mocha --require @babel/register --recursive \"./test/index.js\"",
+    "test:prod": "cross-env BABEL_ENV=production npm run test",
+    "test:dist-only": "mocha --require @babel/register --recursive \"./test/dist.js\"",
+    "test:all": "npm run lint && npm run test:only && npm run test:dist-only",
+    "test:watch": "npm test -- --watch",
+    "lint": "eslint src test",
+    "lint-fix": "eslint src test --fix",
+    "build": "npm run test && cross-env BABEL_ENV=development babel src --out-dir lib --copy-files && npm run dist && npm run test:dist-only",
+    "dist": "cross-env BABEL_ENV=dist babel src --out-dir build/temp && browserify -p [ browserify-banner --file build/dist-banner.txt ] build/temp/index.js > dist/catalan2ipa.js --standalone catalan2ipa && cross-env BABEL_ENV=production babel src --out-dir build/temp && browserify -p [ browserify-banner --file build/dist-banner.txt ] --standalone catalan2ipa -g uglifyify build/temp/index.js > dist/catalan2ipa.min.js && rimraf build/temp",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "files": [
+    "lib",
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Connum/catalan2ipa.git"
+  },
+  "keywords": [
+    "catalan",
+    "català",
+    "valencian",
+    "valencià",
+    "balearic",
+    "balear",
+    "language",
+    "linguistics",
+    "ipa",
+    "international phonetic alphabet",
+    "transliteration",
+    "converter"
+  ],
+  "author": "Connum <connum@gmail.com>",
+  "license": "LGPL-3.0+",
+  "bugs": {
+    "url": "https://github.com/Connum/catalan2ipa/issues"
+  },
+  "homepage": "https://github.com/Connum/catalan2ipa#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-transform-object-assign": "^7.2.0",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/register": "^7.5.5",
+    "babel-eslint": "^10.0.2",
+    "babel-minify": "^0.5.0",
+    "babel-plugin-add-module-exports": "^1.0.2",
+    "browserify": "^16.3.0",
+    "browserify-banner": "^1.0.14",
+    "chai": "^4.2.0",
+    "cross-env": "^5.2.0",
+    "eslint": "^6.0.1",
+    "eslint-config-airbnb": "^17.1.1",
+    "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.14.2",
+    "istanbul": "^1.0.0-alpha",
+    "mocha": "^6.2.0",
+    "rimraf": "^2.6.3",
+    "uglifyify": "^5.0.1"
+  }
+}
