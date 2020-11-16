@@ -1,5 +1,5 @@
 /*!
- * catalan2ipa v1.0.0 (July 19th 2019)
+ * catalan2ipa v1.0.1 (June 17th 2021)
  * Converts Catalan words to IPA (international phonetic alphabet) notation, with variants for Cental Catalan (Català oriental central), Valencian (Valencià) and Balearic (Balear).
  * 
  * https://github.com/Connum/catalan2ipa#readme
@@ -85,15 +85,41 @@ accents.ca = function (syllablesIn) {
     } // v > b
 
 
-    current.onset = current.onset.replace(/v/g, 'b');
-    current.coda = current.coda.replace(/nb/g, 'mb');
+    if (/v/.test(current.onset)) {
+      current.onset = current.onset.replace(/v/g, 'b');
 
-    if (i > 0 && /^b/.test(current.onset)) {
-      previous.coda = previous.coda.replace(/n$/, 'm');
+      if (i > 0 && !/[pbtdkɡmɱnɲŋ]$/.test(previous.coda) && (previous.stressed === false || current.stressed === false)) {
+        current.onset = current.onset.replace(/^b/, 'β');
+      } else if (i > 0 && /^b/.test(current.onset)) {
+        previous.coda = previous.coda.replace(/[ɱn]$/, 'm');
+      }
+
+      current.coda = current.coda.replace(/[ɱn]b/, 'mb');
     } // allophones of r
 
 
-    current.coda = current.coda.replace(/ɾ/g, 'r'); // Remove j before palatal obstruents
+    current.coda = current.coda.replace(/ɾ/g, 'r'); // no spirants after r/z
+
+    if (i > 0 && /[rz]$/.test(previous.coda)) {
+      current.onset = current.onset.replace(/^[β]/, 'b').replace(/^[ð]/, 'd').replace(/^[ɣ]/, 'g');
+    } // Poststressed gemination bl, gl
+
+
+    if (i > 0 && (current.onset === 'βɫ' || current.onset === 'ɣɫ') && previous.coda === '' && previous.stressed) {
+      current.onset = current.onset.replace(/[β]/, 'b').replace(/[ɣ]/, 'g');
+      previous.coda = current.onset.substr(0, 1);
+    } // tl > ll
+
+
+    if (i > 0 && current.onset === 'ɫ') {
+      previous.coda = previous.coda.replace('d', 'ɫ');
+    } // Velarization -gn-, -cn-
+
+
+    if (i > 0 && current.onset === 'n') {
+      previous.coda = previous.coda.replace('ɡ', 'ŋ');
+    } // Remove j before palatal obstruents
+
 
     current.coda = current.coda.replace(/j([ʃʒ])/g, '$1');
     current.coda = current.coda.replace(/j(t͡ʃ)/g, '$1');
@@ -226,11 +252,15 @@ exports.splitSyllables = splitSyllables;
 exports.toIPA = toIPA;
 exports["default"] = exports.wordFixes = void 0;
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -430,6 +460,7 @@ function postprocessGeneral(syllablesIn) {
     m: true,
     n: true,
     ɲ: true,
+    ɫ: true,
     l: true,
     ʎ: true,
     r: true,
@@ -452,12 +483,18 @@ function postprocessGeneral(syllablesIn) {
     f: 'v',
     p: 'b',
     t: 'd',
-    s: 'z'
+    s: 'z',
+    ʃ: 'ʒ'
   };
   var devoicing = {
     b: 'p',
     d: 't',
     ɡ: 'k'
+  };
+  var lenition = {
+    b: 'β',
+    d: 'ð',
+    ɡ: 'ɣ'
   };
 
   for (var i = 0; i < syllables.length; i++) {
@@ -548,6 +585,10 @@ function postprocessGeneral(syllablesIn) {
       // ex + (h) vowel > egz
       previous.coda = 'ɡ';
       current.onset = 'z';
+    }
+
+    if (i > 0 && /^[bdɡ]/.test(current.onset) && !/^d͡/.test(current.onset) && !/[pbtdkɡmɱnɲŋ]$/.test(previous.coda) && !(/[ɫlʎ]/.test(previous.coda) && current.onset === 'd') && (previous.stressed === false || current.stressed === false)) {
+      current.onset = current.onset.replace(/b/, lenition.b).replace(/d/, lenition.d).replace(/ɡ/, lenition.ɡ);
     }
   } // Final devoicing
 
@@ -1043,11 +1084,15 @@ var _helpers = require("./helpers");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
