@@ -60,9 +60,9 @@ describe('Additional test cases', () => {
 
   it('should transliterate "investigació"', () => {
     const expectedVal = {
-      ca: '/im.bəs.ti.ɡə.siˈo/',
-      'ca-valencia': '/im.ves.ti.ɡa.siˈo/',
-      'ca-XB': '/im.vəs.ti.ɡə.siˈo/'
+      ca: '/im.bəs.ti.ɣə.siˈo/',
+      'ca-valencia': '/im.ves.ti.ɣa.siˈo/',
+      'ca-XB': '/im.vəs.ti.ɣə.siˈo/'
     };
     assert.deepEqual(catalan2ipa('investigació'), expectedVal);
   });
@@ -78,18 +78,18 @@ describe('Additional test cases', () => {
 
   it('should transliterate "Bellreguard"', () => {
     const expectedVal = {
-      ca: '/bəʎ.ɾəˈɡwart/',
-      'ca-valencia': '/beʎ.ɾeˈɡwaɾt/',
-      'ca-XB': '/bəʎ.ɾəˈɡwaɾt/'
+      ca: '/bəʎ.ɾəˈɣwart/',
+      'ca-valencia': '/beʎ.ɾeˈɣwaɾt/',
+      'ca-XB': '/bəʎ.ɾəˈɣwaɾt/'
     };
     assert.deepEqual(catalan2ipa('Bellreguard'), expectedVal);
   });
 
   it('should transliterate "col·laborar"', () => {
     const expectedVal = {
-      ca: '/kul.lə.buˈɾa/',
-      'ca-valencia': '/kol.la.boˈɾaɾ/',
-      'ca-XB': '/kol.lə.boˈɾa/'
+      ca: '/kul.lə.βuˈɾa/',
+      'ca-valencia': '/kol.la.βoˈɾaɾ/',
+      'ca-XB': '/kol.lə.βoˈɾa/'
     };
     assert.deepEqual(catalan2ipa('col·laborar'), expectedVal);
   });

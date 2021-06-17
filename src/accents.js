@@ -52,14 +52,44 @@ accents.ca = (syllablesIn) => {
     }
 
     // v > b
-    current.onset = current.onset.replace(/v/g, 'b');
-    current.coda = current.coda.replace(/nb/g, 'mb');
-    if (i > 0 && /^b/.test(current.onset)) {
-      previous.coda = previous.coda.replace(/n$/, 'm');
+    if (/v/.test(current.onset)) {
+      current.onset = current.onset.replace(/v/g, 'b');
+      if (i > 0 && !/[pbtdkɡmɱnɲŋ]$/.test(previous.coda) && (previous.stressed === false || current.stressed === false)) {
+        current.onset = current.onset.replace(/^b/, 'β');
+      } else if (i > 0 && /^b/.test(current.onset)) {
+        previous.coda = previous.coda.replace(/[ɱn]$/, 'm');
+      }
+      current.coda = current.coda.replace(/[ɱn]b/, 'mb');
     }
 
     // allophones of r
     current.coda = current.coda.replace(/ɾ/g, 'r');
+
+    // no spirants after r/z
+    if (i > 0 && /[rz]$/.test(previous.coda)) {
+      current.onset = current.onset
+        .replace(/^[β]/, 'b')
+        .replace(/^[ð]/, 'd')
+        .replace(/^[ɣ]/, 'g');
+    }
+
+    // Poststressed gemination bl, gl
+    if (i > 0 && (current.onset === 'βɫ' || current.onset === 'ɣɫ') && previous.coda === '' && previous.stressed) {
+      current.onset = current.onset
+        .replace(/[β]/, 'b')
+        .replace(/[ɣ]/, 'g');
+      previous.coda = current.onset.substr(0, 1);
+    }
+
+    // tl > ll
+    if (i > 0 && current.onset === 'ɫ') {
+      previous.coda = previous.coda.replace('d', 'ɫ');
+    }
+
+    // Velarization -gn-, -cn-
+    if (i > 0 && current.onset === 'n') {
+      previous.coda = previous.coda.replace('ɡ', 'ŋ');
+    }
 
     // Remove j before palatal obstruents
     current.coda = current.coda.replace(/j([ʃʒ])/g, '$1');

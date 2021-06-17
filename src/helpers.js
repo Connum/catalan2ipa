@@ -222,6 +222,7 @@ function postprocessGeneral(syllablesIn) {
     m: true,
     n: true,
     ɲ: true,
+    ɫ: true,
     l: true,
     ʎ: true,
     r: true,
@@ -234,9 +235,15 @@ function postprocessGeneral(syllablesIn) {
     p: true, t: true, k: true, f: true, s: true, ʃ: true, '': true
   };
   const voicing = {
-    k: 'ɡ', f: 'v', p: 'b', t: 'd', s: 'z'
+    k: 'ɡ', f: 'v', p: 'b', t: 'd', s: 'z', ʃ: 'ʒ'
   };
   const devoicing = { b: 'p', d: 't', ɡ: 'k' };
+
+  const lenition = {
+    b: 'β',
+    d: 'ð',
+    ɡ: 'ɣ'
+  };
 
   for (let i = 0; i < syllables.length; i++) {
     const current = syllables[i];
@@ -328,6 +335,10 @@ function postprocessGeneral(syllablesIn) {
       // ex + (h) vowel > egz
       previous.coda = 'ɡ';
       current.onset = 'z';
+    }
+
+    if (i > 0 && /^[bdɡ]/.test(current.onset) && !/^d͡/.test(current.onset) && !/[pbtdkɡmɱnɲŋ]$/.test(previous.coda) && !(/[ɫlʎ]/.test(previous.coda) && current.onset === 'd') && (previous.stressed === false || current.stressed === false)) {
+      current.onset = current.onset.replace(/b/, lenition.b).replace(/d/, lenition.d).replace(/ɡ/, lenition.ɡ);
     }
   }
 
